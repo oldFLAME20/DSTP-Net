@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="6d93bcc0-43bb-4cf2-be8b-75ad00479798" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.name" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/MEMTO.iml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/deployment.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/sshConfigs.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/webServers.xml" beforeDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
+  "lastFilter": {
+    "state": "OPEN",
+    "assignee": "oldFLAME20"
+  }
+}]]></component>
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/oldFLAME20/DSTP-Net.git",
+    "accountId": "4f8812c8-68b5-4807-ae22-976587c8c2e5"
+  }
+}]]></component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 4
+}</component>
+  <component name="ProjectId" id="35jW3ZMCN1DGA2RVl31Gj3Kzqmb" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "git-widget-placeholder": "main",
+    "ignore.virus.scanning.warn.message": "true",
+    "last_opened_file_path": "C:/Users/10721/Nutstore/1/我的坚果云/code/MEMTO/png",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "preferences.lookFeel",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\10721\Nutstore\1\我的坚果云\code\MEMTO\png" />
+      <recent name="C:\Users\111\lgx\MEMTO" />
+      <recent name="C:\Users\111\lgx\MEMTO\script" />
+      <recent name="C:\Users\111\lgx\MEMTO\utils" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\111\lgx\MEMTO\features\pl=7" />
+    </key>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-js-predefined-1d06a55b98c1-0b3e54e931b4-JavaScript-PY-241.18034.82" />
+        <option value="bundled-python-sdk-975db3bf15a3-2767605e8bc2-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-241.18034.82" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="6d93bcc0-43bb-4cf2-be8b-75ad00479798" name="Changes" comment="" />
+      <created>1763623764721</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1763623764721</updated>
+      <workItem from="1763623766175" duration="11298000" />
+      <workItem from="1763708235519" duration="8500000" />
+      <workItem from="1763801054105" duration="12629000" />
+      <workItem from="1763818611792" duration="465000" />
+      <workItem from="1763868696197" duration="8582000" />
+      <workItem from="1763880065013" duration="3859000" />
+      <workItem from="1763886298462" duration="20188000" />
+      <workItem from="1763968771751" duration="254000" />
+      <workItem from="1763969048107" duration="469000" />
+      <workItem from="1763969538699" duration="7852000" />
+      <workItem from="1763981340369" duration="5250000" />
+      <workItem from="1763987394193" duration="37226000" />
+      <workItem from="1764163441209" duration="9784000" />
+      <workItem from="1764238534475" duration="18118000" />
+      <workItem from="1764335971663" duration="57987000" />
+      <workItem from="1764758702529" duration="6490000" />
+      <workItem from="1764849868604" duration="100450000" />
+      <workItem from="1765523108006" duration="27881000" />
+      <workItem from="1765617611070" duration="19626000" />
+      <workItem from="1767596768327" duration="3911000" />
+      <workItem from="1767875816946" duration="7000000" />
+      <workItem from="1768381059667" duration="2215000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+</project>
