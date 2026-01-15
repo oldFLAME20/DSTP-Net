@@ -4,7 +4,7 @@ import torch.nn.functional as F
 from torch_geometric.data import Data, Batch
 from torch_geometric.nn import GCNConv
 
-from model.Transformer import  PatchBranch,PatchLocalBranch,GlobalContextBranch,EncoderLayer, Encoder, Decoder, AttentionLayer, InputEmbedding, MemoryModule
+from model.Transformer import  PatchBranch,EncoderLayer, Encoder, Decoder, AttentionLayer, InputEmbedding, MemoryModule
 from model.embedding import InputEmbedding
 from model.ours_memory_module import MemoryModule
 

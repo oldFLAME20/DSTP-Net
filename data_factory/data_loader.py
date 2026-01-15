@@ -129,7 +129,6 @@ class NIPS_TS_CCardSegLoader(object):
                     # 获取当前窗口的标签
                     window_labels = self.test_labels[i: i + non_overlap_step]
 
-                    # 确保窗口是完整的，如果不是则忽略 (这是常见做法)
                     if len(window_labels) < non_overlap_step:
                         continue
 
@@ -190,26 +189,12 @@ class SWaTSegLoader(Dataset):
         test_data = pd.read_csv(data_path + '/SWaT_Dataset_Attack_v0.csv')
         self.test_labels = test_data['Normal/Attack'].values.reshape(-1, 1)
 
-        # y = test_data['Normal/Attack'].to_numpy()
-        # labels = []
-        # for i in y:
-        #     if i == 'Attack':
-        #         labels.append(1)
-        #     else:
-        #         labels.append(0)
-        # labels = np.array(labels)
+
         test_data = test_data.values[:, 1:-1]
         test_data = np.nan_to_num(test_data)
 
         self.test = self.scaler.transform(test_data)
         self.train = data
-
-        # test_data = test_data.values[:, 1:-1]
-        # test_data = np.nan_to_num(test_data)
-        #
-        # self.test = self.scaler.transform(test_data)
-        # self.train = data
-        # self.test_labels = labels.reshape(-1, 1)
 
         print("test:", self.test.shape)
         print("train:", self.train.shape)

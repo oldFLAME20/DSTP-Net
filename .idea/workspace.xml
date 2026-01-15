@@ -5,7 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="6d93bcc0-43bb-4cf2-be8b-75ad00479798" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data_factory/data_loader.py" beforeDir="false" afterPath="$PROJECT_DIR$/data_factory/data_loader.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/model/GNN_Module.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/GNN_Module.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -63,7 +65,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1768444688853</updated>
-      <workItem from="1768444690510" duration="10000" />
+      <workItem from="1768444690510" duration="243000" />
     </task>
     <servers />
   </component>
