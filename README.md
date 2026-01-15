@@ -16,5 +16,14 @@ In the main experiment, we evaluate the performance of DSTP-Net on multivariate 
 </p>
 
 
-## 
+### The dataset SWaT and WADI can be obtained by submitting a request through https://itrust.sutd.edu.sg/itrust-labs_datasets/.
 
+### conda create --name xx python==3.10 and  pip install -r requirements.txt 
+
+### To run the code, please use the following command:
+```bash
+    bash scripts/MSL_hypermemter.sh
+    bash scripts/SWaT_hypermemter.sh
+    bash scripts/WADI_hypermemter.sh
+    bash scripts/SMAP_hypermemter.sh
+```
