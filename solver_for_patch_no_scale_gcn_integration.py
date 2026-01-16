@@ -1,3 +1,5 @@
+# Some code based on https://github.com/thuml/Anomaly-Transformer
+## 这个跟solver_for_patch_gcn_backup.py区别是本文件加上了kmeans超时自动跳过
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -7,7 +9,8 @@ import time
 import math
 from tqdm import tqdm
 
-from model.GNN_Module import GCN_PLT_Model
+from model.GNN_Module import GCN_PAD_Model,GCN_PLT_Model
+from model.Transformer import TransformerVar,PatchLocalTransformer,PatchLocalBranch
 from model.loss_functions import *
 from data_factory.data_loader import get_loader_segment
 import logging
@@ -282,6 +285,7 @@ class OneEarlyStopping:
 
 
 import numpy as np
+import matplotlib.pyplot as plt
 import seaborn as sns
 from sklearn.decomposition import PCA
 from sklearn.manifold import TSNE
@@ -289,6 +293,81 @@ import torch
 from sklearn.preprocessing import StandardScaler
 from sklearn.decomposition import PCA
 
+
+def visualize_features(queries_tensor, method='pca', num_points=10000, save_path='feature_map.png'):
+    """
+    使用 PCA 或 t-SNE 将高维 queries 投影到 2D 并绘图。
+
+    queries_tensor: 展平后的 Queries Tensor (N_total, D)
+    method: 'pca' 或 'tsne'
+    num_points: 用于绘图的最大样本数量
+    save_path: 图像保存路径
+    """
+
+    # 确保数据在 CPU 上并转换为 NumPy
+    queries_np = queries_tensor.detach().cpu().numpy()
+
+    N, D = queries_np.shape
+
+    if N > num_points:
+        # 随机采样，避免 t-SNE 耗时过长
+        indices = np.random.choice(N, num_points, replace=False)
+        data_to_plot = queries_np[indices]
+    else:
+        data_to_plot = queries_np
+
+    print(f"Visualizing {data_to_plot.shape[0]} points using {method}...")
+    scaler = StandardScaler()
+    scaled_data = scaler.fit_transform(data_to_plot)  # <--- 必须在这里计算
+    if method == 'pca':
+        if D < 2:
+            print("Error: Feature dimension too low for PCA.")
+            return
+        reducer = PCA(n_components=2)
+        reduced_data = reducer.fit_transform(data_to_plot)
+        plt.title(f'PCA of Encoded Queries (Variance Explained: {np.sum(reducer.explained_variance_ratio_):.2f})')
+
+    elif method == 'tsne':
+        # --- 修正点 1：高维降维到 50 维 (PCA Pre-reduction) ---
+        D_original = scaled_data.shape[1]
+        if D_original > 50:
+            print(f"Applying PCA pre-reduction from {D_original}D to 50D...")
+            pca_pre = PCA(n_components=50, random_state=42)
+            data_for_tsne = pca_pre.fit_transform(scaled_data)
+        else:
+            data_for_tsne = scaled_data
+
+        # --- 修正点 2：调用 t-SNE ---
+        # 增加迭代次数以提高收敛稳定性
+        reducer = TSNE(n_components=2,
+                       random_state=42,
+                       n_jobs=4,
+                       learning_rate=200,  # 常用默认值或手动调整
+                       init='pca',
+                       n_iter=1000)  # 确保有足够迭代次数
+
+        reduced_data = reducer.fit_transform(data_for_tsne)
+        plt.title('t-SNE of Encoded Queries (Pre-reduced)')
+
+    else:
+        raise ValueError("Invalid visualization method. Use 'pca' or 'tsne'.")
+
+    plt.figure(figsize=(10, 8))
+    sns.scatterplot(
+        x=reduced_data[:, 0],
+        y=reduced_data[:, 1],
+        palette="viridis",
+        legend=False,
+        alpha=0.6,
+        s=10
+    )
+    plt.xlabel('Component 1')
+    plt.ylabel('Component 2')
+    plt.grid(True, linestyle='--', alpha=0.5)
+    plt.savefig(save_path)
+    plt.close()
+    print(f"Feature map saved to {save_path}")
+  # 根据数据集类型导入不同的工具模块
 
 class Solver(object):
 
@@ -398,7 +477,79 @@ class Solver(object):
         self.optimizer = torch.optim.Adam(self.model.parameters(), lr=self.lr)
         self.model.to(self.device)
 
-
+    # def _calculate_loss(self, output_dict, input):
+    #     # 1. 重构损失 L_rec (使用 final_output)
+    #     sse = self.sse_criterion(output_dict['final_output'], input)
+    #     L_rec = torch.sqrt(sse)  # 弗罗贝尼乌斯范数
+    #
+    #     # 2. Patch 熵损失 L_ent (使用 patch_attns)
+    #     L_ent = 0
+    #     if 'patch_attns' in output_dict and output_dict['patch_attns']:
+    #         total_entropy_sum = 0
+    #         # PatchLocalBranch 返回单尺度，键为 1
+    #         attn_z = output_dict['patch_attns'][1]  # <--- 适配单尺度 Patch 分支
+    #         entropy_map = -attn_z * torch.log(attn_z + 1e-12)
+    #         total_entropy_sum = torch.sum(entropy_map)
+    #         L_ent = total_entropy_sum
+    #
+    #     # 3. GCN 匹配损失 L_gcn (使用 gcn_queries 和 gcn_attn/gcn_mem)
+    #     L_gcn = 0
+    #     if 'gcn_queries' in output_dict:
+    #         # L_gcn 逻辑保持不变 (它基于 GCN queries 和 GCN mem)
+    #         gcn_queries_flat = output_dict['gcn_queries'].contiguous().view(-1, self.d_model)
+    #         gcn_mem = output_dict['gcn_mem']
+    #
+    #         # 使用 GCN Attn 找到最近原型
+    #         gcn_attn_flat = output_dict['gcn_attn'].contiguous().view(-1, self.n_memory)
+    #         _, top_indices = torch.topk(gcn_attn_flat, 1, dim=-1)
+    #         gcn_mem_on_device = gcn_mem.to(top_indices.device)
+    #         nearest_mems = gcn_mem_on_device[top_indices.squeeze(1)]
+    #
+    #         # L2 距离之和
+    #         distances = torch.norm(gcn_queries_flat - nearest_mems, p=2, dim=1)
+    #         L_gcn = torch.sum(distances)
+    #
+    #     # 4. 总损失 LOSS (使用 a1, a2, a3)
+    #     total_loss = self.a1 * L_rec + self.a2 * L_ent + self.a3 * L_gcn
+    #
+    #     return total_loss, L_rec.item(), L_ent.item(), L_gcn.item()
+    ####//这部分是可以实现的可以跑的 todo
+    # def _calculate_loss(self, output_dict, input):
+    #     # 1. 重构损失 L_rec (使用 final_output)
+    #     sse = self.sse_criterion(output_dict['final_output'], input)
+    #     L_rec = torch.sqrt(sse)  # 弗罗贝尼乌斯范数
+    #
+    #     # 2. Patch 熵损失 L_ent (使用 patch_attns)
+    #     L_ent = 0
+    #     if 'patch_attns' in output_dict and output_dict['patch_attns']:
+    #         total_entropy_sum = 0
+    #         # PatchLocalBranch 返回单尺度，键为 1
+    #         attn_z = output_dict['patch_attns'][1]  # <--- 适配单尺度 Patch 分支
+    #         entropy_map = -attn_z * torch.log(attn_z + 1e-12)
+    #         total_entropy_sum = torch.sum(entropy_map)
+    #         L_ent = total_entropy_sum
+    #
+    #     # 3. GCN 匹配损失 L_gcn (使用 gcn_queries 和 gcn_attn/gcn_mem)
+    #     L_gcn = 0
+    #     if 'gcn_queries' in output_dict:
+    #         # L_gcn 逻辑保持不变 (它基于 GCN queries 和 GCN mem)
+    #         gcn_queries_flat = output_dict['gcn_queries'].contiguous().view(-1, self.d_model)
+    #         gcn_mem = output_dict['gcn_mem']
+    #
+    #         # 使用 GCN Attn 找到最近原型
+    #         gcn_attn_flat = output_dict['gcn_attn'].contiguous().view(-1, self.n_memory)
+    #         _, top_indices = torch.topk(gcn_attn_flat, 1, dim=-1)
+    #         gcn_mem_on_device = gcn_mem.to(top_indices.device)
+    #         nearest_mems = gcn_mem_on_device[top_indices.squeeze(1)]
+    #
+    #         # L2 距离之和
+    #         distances = torch.norm(gcn_queries_flat - nearest_mems, p=2, dim=1)
+    #         L_gcn = torch.sum(distances)
+    #
+    #     # 4. 总损失 LOSS (使用 a1, a2, a3)
+    #     total_loss = self.a1 * L_rec + self.a2 * L_ent + self.a3 * L_gcn
+    #
+    #     return total_loss, L_rec.item(), L_ent.item(), L_gcn.item()
 
     def _calculate_loss(self, output_dict, input):
 
@@ -548,7 +699,8 @@ class Solver(object):
 
         # --- 初始化和参数获取 ---
         criterion = nn.MSELoss(reduction='none')
-
+        gathering_fn = self.match_loss_gcn  # 假设 GatheringLoss 存储在这里
+        temperature = self.temperature if hasattr(self, 'temperature') else 1.0
 
         # =====================================================================
         # === 1. 加载模型和获取 Patch 参数 ===
@@ -559,6 +711,15 @@ class Solver(object):
         self.model.eval()
 
         print("====================== TEST MODE ======================")
+
+        # 从模型中获取 Patch 参数 (在加载 state dict 后)
+        model_to_get_params = self.model.module if isinstance(self.model, nn.DataParallel) else self.model
+        L = self.win_size
+        P_len = model_to_get_params.patch_len
+        N_patch = model_to_get_params.num_patches
+
+        # -----------------------
+
         def calculate_anomaly_score(output_dict, input):
             N, L, C = input.shape
 
@@ -571,6 +732,8 @@ class Solver(object):
             if 1 in Q_points_dict:
                 Q_points = Q_points_dict[1]  # Q_points shape: [N, N_patch, D]
             else:
+                # 如果键是别的，例如 'queries' 或 'point_queries'，则需要适应
+                # 基于您提供的 GCN_PLT_Model.forward 结构，键是 1
                 raise KeyError("Patch queries dictionary missing expected key 1.")
 
             mem_z = output_dict['patch_mems'][1]
@@ -602,10 +765,20 @@ class Solver(object):
             dists_gcn = torch.cdist(gcn_queries_flat, gcn_mem_on_device)
             min_dists_gcn, _ = torch.min(dists_gcn, dim=1)
             sg = min_dists_gcn.view(N, L)  # Sg: [N, L]
+            # print("sz的大小",sz)
+            # print("sg的大小",sg)
+            # --- d. 最终分数 (H-PAD 融合风格) --- beta_list=(0 0.1 0.5 0.01 0.05 0.001 0.005 0.0001 0.0005)
+            # feature_score 融合了 Patch 偏差和 GCN 偏差
             feature_score = sz + self.beta * sg
-            final_score = torch.softmax(feature_score, dim=-1) * sr
-            return final_score
 
+            # 最终分数：使用特征偏差加权的重构误差
+            # 注意：这里我们使用 softmax(feature_score) 作为权重，这遵循您原始代码的乘法结构。
+            final_score = torch.softmax(feature_score, dim=-1) * sr
+
+            return final_score
+        # =====================================================================
+        # === 3. 循环调用评分函数 ===
+        # =====================================================================
 
         # --- A. 训练集评分 (用于阈值) ---
         train_attens_energy = []
@@ -654,14 +827,17 @@ class Solver(object):
 
         test_scores = np.concatenate(test_scores_list, axis=0).flatten()
         test_labels = np.concatenate(test_labels_list, axis=0).flatten()
+
+        # =====================================================================
+        # === 5. 评估预测结果 (这部分与您之前的代码逻辑一致) ===
+        # =====================================================================
         pred = (test_scores > thresh).astype(int)
+        gt = test_labels.astype(int)
 
         # 针对WADI数据集的特殊处理
         if self.dataset == 'WADI':
             gt = np.zeros_like(test_labels, dtype=int)
             gt[test_labels == -1] = 1
-        else:
-            gt = test_labels.astype(int)
 
         # PA (Point-Adjustment) 调整逻辑
         anomaly_state = False
@@ -725,6 +901,8 @@ class Solver(object):
         # # === 修改：将新指标传递给日志记录函数 ===
         self.record_results(accuracy, precision, recall, f_score, auc_roc,
                             auc_pr, r_a_r, r_a_p, r_a_fscore, v_roc,v_pr)
+        # 日志记录...
+        # self.record_results(accuracy, precision, recall, f_score, auc_roc, auc_pr)
 
         return accuracy, precision, recall, f_score, auc_roc, auc_pr
 
@@ -738,11 +916,21 @@ class Solver(object):
         v_roc, v_pr = calculate_vus_metrics_fast(gt, test_scores)
             """
             # 创建结果文件路径
+
+            # result_file = f"./res/{self.dataset}/res_{self.dataset}_gcn_patch.md"
+            # result_file = f"./res/{self.dataset}/res_{self.dataset}_gcn_patch.md"
+            # result_file = f"./res/{self.dataset}/res_{self.dataset}_gcn_patch_no_scale.md"
+            # result_file = f"./res/{self.dataset}/res_{self.dataset}_gcn_patch_no_scale_integration.md"
+            # result_file = f"./res/{self.dataset}/res_{self.dataset}_gcn_patch_no_scale_integration_patch_flat_seed{self.seed}_patchLen{self.patch_len}_MLP8_.md"
             result_file = f"./res/{self.dataset}/res_{self.dataset}_main_seed{self.seed}_patchLen{self.patch_len}_MLP8_memory_{self.n_memory}_{self.n_memory_patch}_topk{self.topk}.md"
 
 
-            result_file = f"./res/{self.dataset}/res_{self.dataset}.md"
+            # result_file = f"./res/{self.dataset}/res_{self.dataset}_seed{self.seed}_patchLen{self.patch_len}_MLP8_dmodel{self.d_model}_topk{self.topk}_dff{self.d_ff}_.md"
 
+
+            # result_file = f"./res/{self.dataset}/res_{self.dataset}_gcn_patch_no_scale_integration_patch_flat_no_MLP_seed{self.seed}_patchLen{self.patch_len}_dmodel{self.d_model}_dff{self.d_ff}.md"
+            # result_file = f"./res/{self.dataset}/res_{self.dataset}_gcn_patch_gamma_gate.md"
+            # result_file = f"./res/{self.dataset}/res_{self.dataset}_gcn_patch_ablation.md"
 
             os.makedirs(os.path.dirname(result_file), exist_ok=True)
             # 构建结果内容
@@ -778,7 +966,8 @@ class Solver(object):
                 self.logger.error(f"写入结果文件时出错: {e}")
                 print(f"写入结果文件时出错: {e}")
     def get_memory_initial_embedding(self, training_type='second_train'):
-
+        # if self.dataset == 'WADI':
+        #     from utils.utils_bank import k_means_clustering
 
         try:
             self.model.load_state_dict(
@@ -806,9 +995,29 @@ class Solver(object):
 
             self.memory_init_embeddings = {'patch': {}}
 
-
+            # =======================================================
+            # === 修正：在保存文件之前，创建 features 目录 ===
+            # =======================================================
+            feature_dir = "./features"
+            if not os.path.exists(feature_dir):
+                os.makedirs(feature_dir, exist_ok=True)
+                print(f"Created feature directory: {feature_dir}")
             # === GCN K-Means ===
             gcn_queries_all = torch.cat(gcn_queries_list, dim=0)
+            # =========================================================
+            # === 诊断步骤：可视化特征空间 ===
+            # =========================================================
+
+            # 1. GCN Queries 可视化 (通常使用 PCA，因为它更快)
+            gcn_queries_flat_for_vis = gcn_queries_all.reshape(-1, self.d_model)
+            visualize_features(
+                gcn_queries_flat_for_vis,
+                method='pca',
+                num_points=10000,
+                save_path=f"./features/{self.dataset}_GCN_Queries_PCA.png"
+            )
+
+
 
             self.memory_init_embeddings['gcn'] = k_means_clustering(gcn_queries_all.reshape(-1, self.d_model),
                                                                     self.n_memory, self.d_model)
@@ -816,8 +1025,19 @@ class Solver(object):
 
             # === Patch K-Means (单尺度 1) ===
             patch_queries_all = torch.cat(patch_queries_lists[1], dim=0)
+            # 2. Patch Queries 可视化 (如果 N_total 允许，可以使用 t-SNE，但 PCA 应该足够诊断)
+            patch_queries_all_flat_for_vis = patch_queries_all.reshape(-1, self.d_model)
+            visualize_features(
+                patch_queries_all_flat_for_vis,
+                method='pca',  # 优先使用 PCA
+                num_points=10000,
+                save_path=f"./features/{self.dataset}_{self.patch_len}_Patch_Queries_PCA.png"
+            )
 
+            # =========================================================
 
+            # 确保文件夹存在
+            os.makedirs("./features", exist_ok=True)
             self.memory_init_embeddings['patch'] = {
                 1: k_means_clustering(
                     patch_queries_all.reshape(-1, self.d_model),
@@ -834,12 +1054,14 @@ class Solver(object):
             print("Starting second stage training...")
             final_mems = self.train(training_type='second_train')
 
+            # ... (Memory 保存逻辑，适配 GCN 和 Patch 单尺度) ...
             item_folder_path = "memory_item"
             os.makedirs(item_folder_path, exist_ok=True)
 
             # GCN 保存
             torch.save(final_mems['gcn'], os.path.join(item_folder_path, f"{self.dataset}_gcn_memory_item.pth"))
 
+            # === 修正 Patch (单尺度 1) 保存逻辑 ===
 
             # 1. 安全获取 Patch 尺度
             if not hasattr(temp_model, 'plt_branch'):
@@ -851,6 +1073,7 @@ class Solver(object):
 
             # 2. 保存 Patch Memory
             if 'patch' in final_mems and PATCH_SCALE_Z in final_mems['patch']:
+                # final_mems['patch'] 使用了数字键 [1] (来自 Solver.train)
                 memory_to_save = final_mems['patch'][PATCH_SCALE_Z]
 
                 # 文件名使用字符串键
@@ -858,6 +1081,7 @@ class Solver(object):
                            os.path.join(item_folder_path, f"{self.dataset}_{PATCH_MEM_KEY}_memory_item.pth"))
                 print(f"Patch ({PATCH_MEM_KEY}) memory item saved.")
             else:
+                # 如果 final_mems['patch'] 的键结构不匹配 (即缺少数字键 1)
                 raise KeyError(
                     f"Failed to retrieve Patch memory. Expected key '{PATCH_SCALE_Z}' not found in final_mems['patch']. Keys found: {final_mems['patch'].keys()}"
                 )

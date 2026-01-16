@@ -5,9 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="6d93bcc0-43bb-4cf2-be8b-75ad00479798" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/deployment.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/deployment.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data_factory/data_loader.py" beforeDir="false" afterPath="$PROJECT_DIR$/data_factory/data_loader.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/model/GNN_Module.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/GNN_Module.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/solver_for_patch_no_scale_gcn_integration.py" beforeDir="false" afterPath="$PROJECT_DIR$/solver_for_patch_no_scale_gcn_integration.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -29,26 +31,61 @@
     "accountId": "4f8812c8-68b5-4807-ae22-976587c8c2e5"
   }
 }]]></component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
   <component name="ProjectColorInfo"><![CDATA[{
+  "customColor": "",
   "associatedIndex": 0
 }]]></component>
-  <component name="ProjectId" id="38H7Y2FPZCOXfvjnL2FRVD3bfQK" />
+  <component name="ProjectId" id="35jW3ZMCN1DGA2RVl31Gj3Kzqmb" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
-    "RunOnceActivity.ShowReadmeOnStart": "true",
     "git-widget-placeholder": "main",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\10721\Nutstore\1\我的坚果云\code\MEMTO\png" />
+      <recent name="C:\Users\111\lgx\MEMTO" />
+      <recent name="C:\Users\111\lgx\MEMTO\script" />
+      <recent name="C:\Users\111\lgx\MEMTO\utils" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\111\lgx\MEMTO\features\pl=7" />
+    </key>
+  </component>
+  <component name="RunManager">
+    <configuration name="main" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/main.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+  </component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
@@ -61,15 +98,50 @@
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
       <changelist id="6d93bcc0-43bb-4cf2-be8b-75ad00479798" name="Changes" comment="" />
-      <created>1768444688853</created>
+      <created>1763623764721</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1768444688853</updated>
-      <workItem from="1768444690510" duration="243000" />
+      <updated>1763623764721</updated>
+      <workItem from="1763623766175" duration="11298000" />
+      <workItem from="1763708235519" duration="8500000" />
+      <workItem from="1763801054105" duration="12629000" />
+      <workItem from="1763818611792" duration="465000" />
+      <workItem from="1763868696197" duration="8582000" />
+      <workItem from="1763880065013" duration="3859000" />
+      <workItem from="1763886298462" duration="20188000" />
+      <workItem from="1763968771751" duration="254000" />
+      <workItem from="1763969048107" duration="469000" />
+      <workItem from="1763969538699" duration="7852000" />
+      <workItem from="1763981340369" duration="5250000" />
+      <workItem from="1763987394193" duration="37226000" />
+      <workItem from="1764163441209" duration="9784000" />
+      <workItem from="1764238534475" duration="18118000" />
+      <workItem from="1764335971663" duration="57987000" />
+      <workItem from="1764758702529" duration="6490000" />
+      <workItem from="1764849868604" duration="100450000" />
+      <workItem from="1765523108006" duration="27881000" />
+      <workItem from="1765617611070" duration="19626000" />
+      <workItem from="1767596768327" duration="3911000" />
+      <workItem from="1767875816946" duration="7000000" />
+      <workItem from="1768381059667" duration="2521000" />
+      <workItem from="1768565640876" duration="63000" />
+      <workItem from="1768565718546" duration="22000" />
+      <workItem from="1768565879716" duration="94000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/main.py</url>
+          <line>8</line>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>
