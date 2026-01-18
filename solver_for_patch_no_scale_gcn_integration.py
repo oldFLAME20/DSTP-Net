@@ -1025,19 +1025,7 @@ class Solver(object):
 
             # === Patch K-Means (单尺度 1) ===
             patch_queries_all = torch.cat(patch_queries_lists[1], dim=0)
-            # 2. Patch Queries 可视化 (如果 N_total 允许，可以使用 t-SNE，但 PCA 应该足够诊断)
-            patch_queries_all_flat_for_vis = patch_queries_all.reshape(-1, self.d_model)
-            visualize_features(
-                patch_queries_all_flat_for_vis,
-                method='pca',  # 优先使用 PCA
-                num_points=10000,
-                save_path=f"./features/{self.dataset}_{self.patch_len}_Patch_Queries_PCA.png"
-            )
 
-            # =========================================================
-
-            # 确保文件夹存在
-            os.makedirs("./features", exist_ok=True)
             self.memory_init_embeddings['patch'] = {
                 1: k_means_clustering(
                     patch_queries_all.reshape(-1, self.d_model),
